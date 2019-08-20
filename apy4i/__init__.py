@@ -25,4 +25,5 @@ async def flip_text(text):
 
 app.route("/slack", methods=["POST"])(slack)
 
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run()
