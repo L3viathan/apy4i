@@ -42,7 +42,7 @@ async def help(user, text):
 
 async def _table(ranks, simulation=False):
     text = "\n".join(
-        "{}: {}".format(k[:2] + "‌" + k[2:], ranks[k]["score"])
+        "{}: {}".format(k[:2] + "\u200c" + k[2:], ranks[k]["score"])
         for k in sorted(ranks, key=lambda x: ranks[x]["score"], reverse=True)
         if ranks[k].get("active", True)
     )
