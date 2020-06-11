@@ -20,7 +20,7 @@ class Store:
         await self.lock.acquire()
         if await self.path.exists():
             async with await self.path.open() as f:
-                self.data = json.load(f)
+                self.data = json.loads(await f.read())
         else:
             self.data = {}
         return self.data
