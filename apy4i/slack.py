@@ -1,22 +1,25 @@
-import requests
-from quart import request, jsonify
+import os
+import asks
+from quart import request, jsonify, abort
 
 
 async def slack():
-    from apy4i import slack_commands
+    from . import slack_commands
 
     data = await request.json
     user = data["user_name"]
     text = data["text"]
     token = data["token"]
 
-    # TODO: check token
+    # no Optional[str] equals Ellipsis:
+    if token != os.environ.get("SLACK_TOKEN", ...):
+        abort(403)
 
     command, _, rest = text.partition(" ")
 
-    return await getattr(
-        slack_commands, command, slack_commands.default_command
-    )(user, rest)
+    return await getattr(slack_commands, command, slack_commands.default_command)(
+        user, rest
+    )
 
 
 async def in_channel(text, hide_sender=False):
@@ -44,5 +47,4 @@ async def attachment(hide_sender=False, public=True, **kwargs):
 
 
 async def respond(data):
-    # TODO: asyncify
-    requests.post((await request.json)["response_url"], json=data)
+    return await asks.post((await request.json)["response_url"], json=data)

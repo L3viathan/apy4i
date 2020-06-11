@@ -1,7 +1,7 @@
 from quart import abort
-from apy4i.slack import in_channel, ephemeral, attachment
-from apy4i.storage import shelf
-from apy4i.utils import elo
+from .slack import in_channel, ephemeral, attachment
+from .storage import Store
+from .utils import elo
 
 win_indicators = [
     "gewinnt",
@@ -64,34 +64,34 @@ async def schika(user, text):
         f"@{user}" if token in ("ich", "mich") else token
         for token in text.lower().split()
     ]
-    ranks = shelf("schika_ranks")
-    if not tokens:
-        return await ephemeral(
-            "Ich habe dich nicht verstanden. Bitte drücke dich klarer aus."
-        )
-    if text == "list":
-        return await _table(ranks)
-    if tokens[0] == "set":
-        player = tokens[1]
-        score = int(tokens[2])
-        ranks[player] = {"score": score, "active": True}
-        return await ephemeral(f"Score of {player} set to {score}.")
+    async with Store("schika_ranks") as ranks:
+        if not tokens:
+            return await ephemeral(
+                "Ich habe dich nicht verstanden. Bitte drücke dich klarer aus."
+            )
+        if text == "list":
+            return await _table(ranks)
+        if tokens[0] == "set":
+            player = tokens[1]
+            score = int(tokens[2])
+            ranks[player] = {"score": score, "active": True}
+            return await ephemeral(f"Score of {player} set to {score}.")
 
-    players = [word for word in tokens if word in ranks]
-    if len(players) == 2:
-        a, b = players
-        score_a = ranks[a]["score"]
-        score_b = ranks[b]["score"]
+        players = [word for word in tokens if word in ranks]
+        if len(players) == 2:
+            a, b = players
+            score_a = ranks[a]["score"]
+            score_b = ranks[b]["score"]
 
-        if any(tok in win_indicators for tok in tokens):
-            delta_a, delta_b = elo(score_a, score_b, "a")
-        elif any(tok in loss_indicators for tok in tokens):
-            delta_a, delta_b = elo(score_a, score_b, "b")
-        elif any(tok in draw_indicators for tok in tokens):
-            delta_a, delta_b = elo(score_a, score_b, "draw")
+            if any(tok in win_indicators for tok in tokens):
+                delta_a, delta_b = elo(score_a, score_b, "a")
+            elif any(tok in loss_indicators for tok in tokens):
+                delta_a, delta_b = elo(score_a, score_b, "b")
+            elif any(tok in draw_indicators for tok in tokens):
+                delta_a, delta_b = elo(score_a, score_b, "draw")
 
-        simulation = any(tok in sim_indicators for tok in tokens)
-        if not simulation:
-            ranks[a]["score"] = round(score_a + delta_a)
-            ranks[b]["score"] = round(score_b + delta_b)
-        return await _table(ranks, simulation=simulation)
+            simulation = any(tok in sim_indicators for tok in tokens)
+            if not simulation:
+                ranks[a]["score"] = round(score_a + delta_a)
+                ranks[b]["score"] = round(score_b + delta_b)
+            return await _table(ranks, simulation=simulation)
