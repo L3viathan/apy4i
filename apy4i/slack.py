@@ -1,12 +1,15 @@
 import os
 import asks
 from quart import request, jsonify, abort
+from .storage import Log
 
 
 async def slack():
     from . import slack_commands
 
-    data = await request.json
+    data = await request.values
+    with Log("requests") as l:
+        l.log(data)
     user = data["user_name"]
     text = data["text"]
     token = data["token"]
