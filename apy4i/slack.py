@@ -54,7 +54,7 @@ async def in_channel(text, hide_sender=False):
 
 
 async def ephemeral(text):
-    await respond({"response_type": "ephemeral", "text": text})
+    return await respond({"response_type": "ephemeral", "text": text})
 
 
 async def attachment(hide_sender=False, public=True, **kwargs):
@@ -70,4 +70,5 @@ async def attachment(hide_sender=False, public=True, **kwargs):
 
 
 async def respond(data):
-    return await asks.post(rq_data.get()["response_url"], json=data)
+    await asks.post(rq_data.get()["response_url"], json=data)
+    return "No content", 204
