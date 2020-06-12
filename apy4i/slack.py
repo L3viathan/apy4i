@@ -1,5 +1,6 @@
 import os
 import hashlib
+import contextvars
 import hmac
 from urllib.parse import parse_qs
 import asks
@@ -7,13 +8,22 @@ from quart import request, jsonify, abort
 from .storage import Log
 
 
+rq_data = contextvars.ContextVar("rq_data")
+
+
 def verify_token(body):
-    ts = request.headers.get("X-Slack-Request-Timestamp")
+    ts = request.headers.get("X-Slack-Request-Timestamp").encode("utf-8")
     signature = request.headers.get("X-Slack-Signature")
     version = b"v0"
     payload = b":".join((version, ts, body))
-    h = hmac.new(os.environ.get("SLACK_SIGNING_SECRET"), payload, hashlib.sha256)
-    assert h.hexdigest() == signature
+    h = hmac.new(
+        os.environ.get("SLACK_SIGNING_SECRET").encode("utf-8"),
+        payload,
+        hashlib.sha256,
+    )
+    expected = signature[len(version) + 1 :]
+    actual = h.hexdigest()
+    assert actual == expected, (actual, expected)
 
 
 async def slack():
@@ -21,16 +31,12 @@ async def slack():
 
     data = await request.get_data()
     verify_token(data)
-    data = parse_qs(data.decode("utf-8"))
+    data = {k: v[0] for (k, v) in parse_qs(data.decode("utf-8")).items()}
+    rq_data.set(data)
     async with Log("requests") as l:
-        l.log(data)
+        await l.log(data)
     user = data["user_name"]
     text = data["text"]
-    token = data["token"]
-
-    # no Optional[str] equals Ellipsis:
-    if token != os.environ.get("SLACK_TOKEN", ...):
-        abort(403)
 
     command, _, rest = text.partition(" ")
 
@@ -64,4 +70,4 @@ async def attachment(hide_sender=False, public=True, **kwargs):
 
 
 async def respond(data):
-    return await asks.post((await request.json)["response_url"], json=data)
+    return await asks.post(rq_data.get()["response_url"], json=data)
