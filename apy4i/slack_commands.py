@@ -47,7 +47,7 @@ async def _table(ranks, simulation=False):
         if ranks[k].get("active", True)
     )
     kwargs = {
-        "author_link": "https://github.com/L3viathan/schikanoeschen/blob/master/german.md",
+        "author_link": "https://github.com/L3viathan/schikanoeschen/blob/master/league-rules-german.md",
         "author_name": "Offizielle Turnierregeln",
         "author_icon": "https://static.l3vi.de/book.png",
         "fallback": "<Ligatabelle>",
