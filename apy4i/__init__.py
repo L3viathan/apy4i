@@ -89,5 +89,14 @@ def elo(outcome, team_a, team_b, k=16):
 
 app.route("/slack", methods=["POST"])(slack)
 
+
+@app.after_request
+def add_cors(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST"
+    return response
+
+
 if __name__ == "__main__":
     app.run()
