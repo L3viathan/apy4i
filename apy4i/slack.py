@@ -48,8 +48,7 @@ async def slack():
 async def in_channel(text, hide_sender=False):
     json_reply = {"response_type": "in_channel", "text": text}
     if hide_sender:
-        await respond(json_reply)
-        return "No content", 204
+        return await respond(json_reply)
     return jsonify(json_reply)
 
 
@@ -64,8 +63,7 @@ async def attachment(hide_sender=False, public=True, **kwargs):
         "attachments": [{"fallback": "<New message>", **kwargs}],
     }
     if hide_sender:
-        await respond(json_reply)
-        return "No content", 204
+        return await respond(json_reply)
     return jsonify(json_reply)
 
 

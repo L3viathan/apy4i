@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from quart import abort
+from textflip import flip as flop
 from .slack import in_channel, ephemeral, attachment
 from .storage import Store, Log
 from .utils import elo
@@ -140,3 +141,6 @@ async def schika(user, text):
                 )
 
             return await _table(ranks, simulation=simulation)
+
+async def flip(user, text):
+    return await ephemeral(flop(text))
