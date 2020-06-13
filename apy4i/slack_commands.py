@@ -75,7 +75,22 @@ async def schika(user, text):
         if tokens[0] == "set":
             player = tokens[1]
             score = int(tokens[2])
+            old_score = ranks.get(player)
             ranks[player] = {"score": score, "active": True}
+
+            async with Log("schika") as l:
+                l.log(
+                    {
+                        "ts": datetime.now(tz=timezone.utc).strftime(
+                            "%Y-%m-%dT%H:%M:%S.%f%z"
+                        ),
+                        "user": user,
+                        "raw_text": text,
+                        "change": {
+                            player: [old_score, score],
+                        },
+                    }
+                )
             return await ephemeral(f"Score of {player} set to {score}.")
 
         players = [word for word in tokens if word in ranks]
