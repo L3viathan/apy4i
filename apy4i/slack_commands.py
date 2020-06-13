@@ -72,6 +72,14 @@ async def schika(user, text):
             )
         if text == "list":
             return await _table(ranks)
+        if tokens[0] == "disable":
+            player = tokens[1]
+            ranks[player]["active"] = False
+            return await ephemeral(f"Disabled {player}.")
+        if tokens[0] == "enable":
+            player = tokens[1]
+            ranks[player]["active"] = True
+            return await ephemeral(f"Enabled {player}.")
         if tokens[0] == "set":
             player = tokens[1]
             score = int(tokens[2])
