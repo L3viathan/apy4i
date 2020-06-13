@@ -1,6 +1,7 @@
+from datetime import datetime, timezone
 from quart import abort
 from .slack import in_channel, ephemeral, attachment
-from .storage import Store
+from .storage import Store, Log
 from .utils import elo
 
 win_indicators = [
@@ -82,11 +83,14 @@ async def schika(user, text):
             a, b = players
             score_a = ranks[a]["score"]
             score_b = ranks[b]["score"]
+            winner = None
 
             if any(tok in win_indicators for tok in tokens):
                 delta_a, delta_b = elo(score_a, score_b, "a")
+                winner = a
             elif any(tok in loss_indicators for tok in tokens):
                 delta_a, delta_b = elo(score_a, score_b, "b")
+                winner = b
             elif any(tok in draw_indicators for tok in tokens):
                 delta_a, delta_b = elo(score_a, score_b, "draw")
 
@@ -94,4 +98,22 @@ async def schika(user, text):
             if not simulation:
                 ranks[a]["score"] = round(score_a + delta_a)
                 ranks[b]["score"] = round(score_b + delta_b)
+
+            async with Log("schika") as l:
+                l.log(
+                    {
+                        "ts": datetime.now(tz=timezone.utc).strftime(
+                            "%Y-%m-%dT%H:%M:%S.%f%z"
+                        ),
+                        "user": user,
+                        "raw_text": text,
+                        "winner": winner,
+                        "participants": [a, b],
+                        "change": {
+                            a: [score_a, ranks[a]["score"]],
+                            b: [score_b, ranks[b]["score"]],
+                        },
+                    }
+                )
+
             return await _table(ranks, simulation=simulation)
