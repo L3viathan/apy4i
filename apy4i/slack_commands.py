@@ -79,7 +79,7 @@ async def schika(user, text):
             ranks[player] = {"score": score, "active": True}
 
             async with Log("schika") as l:
-                l.log(
+                await l.log(
                     {
                         "ts": datetime.now(tz=timezone.utc).strftime(
                             "%Y-%m-%dT%H:%M:%S.%f%z"
@@ -115,7 +115,7 @@ async def schika(user, text):
                 ranks[b]["score"] = round(score_b + delta_b)
 
             async with Log("schika") as l:
-                l.log(
+                await l.log(
                     {
                         "ts": datetime.now(tz=timezone.utc).strftime(
                             "%Y-%m-%dT%H:%M:%S.%f%z"
