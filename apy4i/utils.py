@@ -1,4 +1,5 @@
 from statistics import mean
+from datetime import datetime, timezone
 
 
 def elo(team_a, team_b, outcome, k=16):
@@ -12,3 +13,7 @@ def elo(team_a, team_b, outcome, k=16):
     R_x, R_y = 10 ** (mean(team_a) / 400), 10 ** (mean(team_b) / 400)
 
     return (k * (S_x - (R_x / (R_x + R_y))), k * (S_y - (R_y / (R_x + R_y))))
+
+
+def timestamp():
+    return datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f%z")

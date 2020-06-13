@@ -9,7 +9,7 @@ from trio import sleep
 from textflip import flip
 from .slack import slack
 from .storage import Store, Log
-from .utils import elo as _elo
+from .utils import timestamp, elo as _elo
 
 logging.basicConfig(
     filename="api.log", level=logging.INFO, format="%(asctime)s\t%(message)s"
@@ -33,6 +33,14 @@ async def hello():
 
 @app.route("/flip/<path:text>")
 async def flip_text(text):
+    async with Log("flips") as l:
+        await l.log(
+            {
+                "ts": timestamp(),
+                "text": text,
+                "ip": request.headers.get("X-Forwarded-For"),
+            }
+        )
     return flip(text)
 
 
