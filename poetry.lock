@@ -543,7 +543,7 @@ description = "Flip text by 180°"
 name = "textflip"
 optional = false
 python-versions = "*"
-version = "0.3.0"
+version = "0.3.1"
 
 [package.dependencies]
 regex = "*"
@@ -934,7 +934,7 @@ sortedcontainers = [
     {file = "sortedcontainers-2.2.2.tar.gz", hash = "sha256:4e73a757831fc3ca4de2859c422564239a31d8213d09a2a666e375807034d2ba"},
 ]
 textflip = [
-    {file = "textflip-0.3.0.tar.gz", hash = "sha256:511b497d37f3eedaa87fb6a5e0f4985c986c57e8bf58e738543b781dd7e59c7b"},
+    {file = "textflip-0.3.1.tar.gz", hash = "sha256:9071b1a1943b5b122b81f6daeaabd4c75c9846ab1aa3f28ed1c469003bfb8989"},
 ]
 toml = [
     {file = "toml-0.10.1-py2.py3-none-any.whl", hash = "sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88"},
