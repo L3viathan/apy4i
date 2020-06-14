@@ -10,6 +10,7 @@ from textflip import flip
 from .slack import slack
 from .storage import Store, Log
 from .utils import timestamp, elo as _elo
+from .krank import klog, ksubmit, ktable, klog_html
 
 logging.basicConfig(
     filename="api.log", level=logging.INFO, format="%(asctime)s\t%(message)s"
@@ -96,6 +97,11 @@ def elo(outcome, team_a, team_b, k=16):
 
 
 app.route("/slack", methods=["POST"])(slack)
+
+app.route("/krank/submit", methods=["POST"])(ksubmit)
+app.route("/krank/log.json")(klog)
+app.route("/krank/log.html")(klog_html)
+app.route("/krank/table")(ktable)
 
 
 @app.after_request
