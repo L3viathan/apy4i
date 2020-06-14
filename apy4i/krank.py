@@ -42,34 +42,34 @@ async def ksubmit():
     winners = data["winners"]
     losers = data["losers"]
     async with Store("krank") as ranks:
-        win_scores_pre = {winner: ranks.get(winner, 1000) for winner in winners}
-        lose_scores_pre = {loser: ranks.get(loser, 1000) for loser in losers}
-        plus, minus = elo(
-            list(win_scores_pre.values()),
-            list(lose_scores_pre.values()),
-            "a",
-            rounding=True,
-        )
-        win_scores_post = {
-            winner: score + plus for winner, score in win_scores_pre.items()
-        }
-        lose_scores_post = {
-            loser: score + minus for loser, score in lose_scores_pre.items()
-        }
-        ranks.update(**win_scores_post, **lose_scores_post)
-    async with Log("krank") as l:
-        await l.log(
-            {
-                "ts": timestamp(),
-                "winners": {
-                    winner: [win_scores_pre[winner], win_scores_post[winner]]
-                    for winner in win_scores_pre
-                },
-                "losers": {
-                    loser: [lose_scores_pre[loser], lose_scores_post[loser]]
-                    for loser in lose_scores_pre
-                },
-                "value": plus,
+        async with Log("krank") as l:
+            win_scores_pre = {winner: ranks.get(winner, 1000) for winner in winners}
+            lose_scores_pre = {loser: ranks.get(loser, 1000) for loser in losers}
+            plus, minus = elo(
+                list(win_scores_pre.values()),
+                list(lose_scores_pre.values()),
+                "a",
+                rounding=True,
+            )
+            win_scores_post = {
+                winner: score + plus for winner, score in win_scores_pre.items()
             }
-        )
+            lose_scores_post = {
+                loser: score + minus for loser, score in lose_scores_pre.items()
+            }
+            ranks.update(**win_scores_post, **lose_scores_post)
+            await l.log(
+                {
+                    "ts": timestamp(),
+                    "winners": {
+                        winner: [win_scores_pre[winner], win_scores_post[winner]]
+                        for winner in win_scores_pre
+                    },
+                    "losers": {
+                        loser: [lose_scores_pre[loser], lose_scores_post[loser]]
+                        for loser in lose_scores_pre
+                    },
+                    "value": plus,
+                }
+            )
     return "No content", 204

@@ -67,10 +67,6 @@ class Log:
         self.lock.release()
 
     async def __aiter__(self):
-        try:
-            await self.lock.acquire()
-            async with await self.path.open() as f:
-                async for line in f:
-                    yield json.loads(line)
-        finally:
-            self.lock.release()
+        async with await self.path.open() as f:
+            async for line in f:
+                yield json.loads(line)
