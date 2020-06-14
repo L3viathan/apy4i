@@ -123,9 +123,7 @@ async def schika(user, text):
             async with Log("schika") as l:
                 await l.log(
                     {
-                        "ts": datetime.now(tz=timezone.utc).strftime(
-                            "%Y-%m-%dT%H:%M:%S.%f%z"
-                        ),
+                        "ts": timestamp(),
                         "user": user,
                         "raw_text": text,
                         "winner": winner,
