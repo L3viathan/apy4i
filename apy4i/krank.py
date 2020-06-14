@@ -69,4 +69,4 @@ async def ksubmit():
                 },
             }
         )
-    return 204, "No content"
+    return "No content", 204
