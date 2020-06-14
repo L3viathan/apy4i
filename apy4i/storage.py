@@ -40,6 +40,7 @@ class Log:
             locks["log"][key] = Semaphore(1)
         self.lock = locks["log"][key]
         self.has_lock = False
+        self.buffer = []
 
     async def __aenter__(self):
         await self.lock.acquire()
@@ -48,21 +49,22 @@ class Log:
 
     async def log(self, data):
         if not self.has_lock:
-            try:
-                await self.lock.acquire()
-                await self._log(data)
-            finally:
-                self.lock.release()
+            async with self:
+                self.log(data)
         else:
             await self._log(data)
 
     async def _log(self, data):
         assert self.has_lock
-        async with await self.path.open("a") as f:
-            await f.write(json.dumps(data))
-            await f.write("\n")
+        self.buffer.append(data)
 
     async def __aexit__(self, exc_type, exc, tb):
+        if exc is None:
+            async with await self.path.open("a") as f:
+                for row in self.buffer:
+                    await f.write(json.dumps(row))
+                    await f.write("\n")
+        self.buffer = []
         self.has_lock = False
         self.lock.release()
 
