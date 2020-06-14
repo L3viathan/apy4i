@@ -47,7 +47,7 @@ async def ksubmit():
     async with Store("krank") as ranks:
         win_scores_pre = {winner: ranks.get(winner, 1000) for winner in winners}
         lose_scores_pre = {loser: ranks.get(loser, 1000) for loser in losers}
-        plus, minus = elo(win_scores_pre, lose_scores_pre, "a")
+        plus, minus = elo(list(win_scores_pre.values()), list(lose_scores_pre.values()), "a")
         win_scores_post = {
             winner: score + plus for winner, score in win_scores_pre.items()
         }
