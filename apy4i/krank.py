@@ -41,10 +41,9 @@ async def klog(html=False, last=8):
 
 
 async def ksubmit():
-    data = await request.get_data()
-    data = {k: v[0] for (k, v) in parse_qs(data.decode("utf-8")).items()}
-    winners = data["winners"].split(",")
-    losers = data["losers"].split(",")
+    data = await request.json
+    winners = data["winners"]
+    losers = data["losers"]
     async with Store("krank") as ranks:
         win_scores_pre = {winner: ranks.get(winner, 1000) for winner in winners}
         lose_scores_pre = {loser: ranks.get(loser, 1000) for loser in losers}
