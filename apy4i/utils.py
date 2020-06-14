@@ -2,7 +2,7 @@ from statistics import mean
 from datetime import datetime, timezone
 
 
-def elo(team_a, team_b, outcome, k=16):
+def elo(team_a, team_b, outcome, k=16, rounding=False):
     if isinstance(team_a, int) and isinstance(team_b, int):
         team_a, team_b = [team_a], [team_b]
     # TODO: figure out what to do when the teams are unequal
@@ -12,7 +12,15 @@ def elo(team_a, team_b, outcome, k=16):
 
     R_x, R_y = 10 ** (mean(team_a) / 400), 10 ** (mean(team_b) / 400)
 
-    return (k * (S_x - (R_x / (R_x + R_y))), k * (S_y - (R_y / (R_x + R_y))))
+    if rounding:
+        modifier = round
+    else:
+        modifier = lambda x: x  # identity
+
+    return (
+        modifier(k * (S_x - (R_x / (R_x + R_y)))),
+        modifier(k * (S_y - (R_y / (R_x + R_y)))),
+    )
 
 
 def timestamp():
