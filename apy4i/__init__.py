@@ -100,7 +100,7 @@ app.route("/slack", methods=["POST"])(slack)
 
 app.route("/krank/submit", methods=["POST"])(ksubmit)
 app.route("/krank/log.json")(klog)
-app.route("/krank/log.html")(klog_html)
+app.route("/krank/logs")(klog_html)
 app.route("/krank/table")(ktable)
 
 

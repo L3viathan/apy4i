@@ -22,7 +22,7 @@ async def ktable():
 
 
 async def klog(html=False, last=8):
-    entries = list(Log("krank"))[-last:]
+    entries = [entry async for entry in Log("krank")][-last:]
     if html:
         return "<br><br>".join(
             "".join(
