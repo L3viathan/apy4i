@@ -26,8 +26,9 @@ class Store:
         return self.data
 
     async def __aexit__(self, exc_type, exc, tb):
-        async with await self.path.open("w") as f:
-            await f.write(json.dumps(self.data))
+        if exc is None:
+            async with await self.path.open("w") as f:
+                await f.write(json.dumps(self.data))
         self.lock.release()
 
 
