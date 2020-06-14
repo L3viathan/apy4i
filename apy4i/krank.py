@@ -1,6 +1,3 @@
-from urllib.parse import parse_qs
-from operator import sub
-
 from quart import request, jsonify
 from .storage import Log, Store
 from .utils import elo, timestamp
@@ -31,7 +28,7 @@ async def klog(html=False, last=8):
                     BEATS_HTML,
                     "".join(PLAYER_HTML.format(loser) for loser in log["losers"]),
                     " (±",
-                    str(abs(sub(*log["winners"][0]))),
+                    log["value"],
                     ")",
                 )
             )
@@ -67,6 +64,7 @@ async def ksubmit():
                     loser: [lose_scores_pre[loser], lose_scores_post[loser]]
                     for loser in lose_scores_pre
                 },
+                "value": plus,
             }
         )
     return "No content", 204
