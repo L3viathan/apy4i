@@ -39,34 +39,34 @@ class Log:
         if key not in locks["log"]:
             locks["log"][key] = Semaphore(1)
         self.lock = locks["log"][key]
-        self.has_lock = False
+        self.in_context = False
         self.buffer = []
 
     async def __aenter__(self):
-        await self.lock.acquire()
-        self.has_lock = True
+        self.in_context = True
         return self
 
     async def log(self, data):
-        if not self.has_lock:
+        if not self.in_context:
             async with self:
                 self.log(data)
         else:
-            await self._log(data)
-
-    async def _log(self, data):
-        assert self.has_lock
-        self.buffer.append(data)
+            self.buffer.append(data)
 
     async def __aexit__(self, exc_type, exc, tb):
-        if exc is None:
-            async with await self.path.open("a") as f:
-                for row in self.buffer:
-                    await f.write(json.dumps(row))
-                    await f.write("\n")
-        self.buffer = []
-        self.has_lock = False
-        self.lock.release()
+        try:
+            if exc is None:
+                await self.lock.acquire()
+                try:
+                    async with await self.path.open("a") as f:
+                        for row in self.buffer:
+                            await f.write(json.dumps(row))
+                            await f.write("\n")
+                finally:
+                    self.lock.release()
+        finally:
+            self.buffer = []
+            self.in_context = False
 
     async def __aiter__(self):
         async with await self.path.open() as f:
