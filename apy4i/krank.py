@@ -28,7 +28,7 @@ async def klog(html=False, last=8):
                     BEATS_HTML,
                     "".join(PLAYER_HTML.format(loser) for loser in log["losers"]),
                     " (±",
-                    log["value"],
+                    str(log["value"]),
                     ")",
                 )
             )
