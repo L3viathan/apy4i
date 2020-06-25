@@ -2,9 +2,11 @@ import os
 import hmac
 import hashlib
 from quart import request, abort
+from functools import wraps
 
 def signing_secret(signing_secret_env):
     def decorator(afn):
+        @wraps(afn)
         async def wrapper(*args, **kwargs):
             body = await request.get_data()
             ts = request.headers.get("X-Slack-Request-Timestamp").encode("utf-8")
@@ -27,6 +29,7 @@ def signing_secret(signing_secret_env):
 
 def simple_token(token_env):
     def decorator(afn):
+        @wraps(afn)
         async def wrapper(*args, **kwargs):
             token = request.headers.get("X-Token")
             if token is None or os.environ.get(token_env) != token:
