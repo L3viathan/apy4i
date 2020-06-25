@@ -1,36 +1,20 @@
-import os
 import hashlib
 import contextvars
-import hmac
 from urllib.parse import parse_qs
 import asks
 from quart import request, jsonify, abort
 from .storage import Log
+from .auth import signing_secret
 
 
 rq_data = contextvars.ContextVar("rq_data")
 
 
-def verify_token(body):
-    ts = request.headers.get("X-Slack-Request-Timestamp").encode("utf-8")
-    signature = request.headers.get("X-Slack-Signature")
-    version = b"v0"
-    payload = b":".join((version, ts, body))
-    h = hmac.new(
-        os.environ.get("SLACK_SIGNING_SECRET").encode("utf-8"),
-        payload,
-        hashlib.sha256,
-    )
-    expected = signature[len(version) + 1 :]
-    actual = h.hexdigest()
-    assert actual == expected, (actual, expected)
-
-
+@signing_secret("SLACK_SIGNING_SECRET")
 async def slack():
     from . import slack_commands
 
     data = await request.get_data()
-    verify_token(data)
     data = {k: v[0] for (k, v) in parse_qs(data.decode("utf-8")).items()}
     rq_data.set(data)
     async with Log("requests") as l:
