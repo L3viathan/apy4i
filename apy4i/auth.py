@@ -28,9 +28,8 @@ def signing_secret(signing_secret_env):
 def simple_token(token_env):
     def decorator(afn):
         async def wrapper(*args, **kwargs):
-            body = await request.get_data()
             token = request.headers.get("X-Token")
-            if os.environ.get(token_env) != token:
+            if token is None or os.environ.get(token_env) != token:
                 abort(403)
             return await afn(*args, **kwargs)
         return wrapper

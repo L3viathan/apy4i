@@ -11,6 +11,7 @@ from .slack import slack
 from .storage import Store, Log
 from .utils import timestamp, elo as _elo
 from .krank import klog, ksubmit, ktable, klog_html
+from .auth import simple_token
 
 logging.basicConfig(
     filename="api.log", level=logging.INFO, format="%(asctime)s\t%(message)s"
@@ -65,11 +66,12 @@ async def stall(key):
         return "stalled"
 
 
-@debug_route("/log/<path:data>")
-async def log(data):
-    async with Log("who") as l:
-        await l.log({"storing": data})
-        return "logged"
+@app.route("/log/<path:key>")
+@simple_token("AUTH_TOKEN")
+async def log(key):
+    async with Log(f"simple_{key}") as l:
+        await l.log(await request.json)
+        return ("No content", "204")
 
 
 @debug_route("/logs")
