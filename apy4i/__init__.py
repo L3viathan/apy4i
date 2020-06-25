@@ -66,7 +66,7 @@ async def stall(key):
         return "stalled"
 
 
-@app.route("/log/<path:key>")
+@app.route("/log/<path:key>", methods=["POST"])
 @simple_token("AUTH_TOKEN")
 async def log(key):
     async with Log(f"simple_{key}") as l:
