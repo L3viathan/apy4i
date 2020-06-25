@@ -1,5 +1,6 @@
 import os
 import hmac
+import hashlib
 from quart import request, abort
 
 def signing_secret(signing_secret_env):
