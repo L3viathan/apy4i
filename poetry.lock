@@ -139,6 +139,18 @@ pycparser = "*"
 
 [[package]]
 category = "main"
+description = "Small library to work with chords and chord-annotated songs"
+name = "chordy"
+optional = false
+python-versions = ">=3.8,<4.0"
+version = "0.1.0"
+
+[package.dependencies]
+click = ">=7.1.2,<8.0.0"
+regex = ">=2020.6.8,<2021.0.0"
+
+[[package]]
+category = "main"
 description = "Composable command line interface toolkit"
 name = "click"
 optional = false
@@ -645,7 +657,7 @@ version = "0.15.0"
 h11 = ">=0.8.1"
 
 [metadata]
-content-hash = "bc0e13919de51c22d5e80145cf8d0b9d16e7d98668bcebe55e6602271ec78667"
+content-hash = "c89eb7a1a4aa0a07695ffe44278269893a023a57a0e5d8c09cc0c7670e881a3c"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -720,6 +732,10 @@ cffi = [
     {file = "cffi-1.14.0-cp38-cp38-win32.whl", hash = "sha256:675686925a9fb403edba0114db74e741d8181683dcf216be697d208857e04ca8"},
     {file = "cffi-1.14.0-cp38-cp38-win_amd64.whl", hash = "sha256:00789914be39dffba161cfc5be31b55775de5ba2235fe49aa28c148236c4e06b"},
     {file = "cffi-1.14.0.tar.gz", hash = "sha256:2d384f4a127a15ba701207f7639d94106693b6cd64173d6c8988e2c25f3ac2b6"},
+]
+chordy = [
+    {file = "chordy-0.1.0-py3-none-any.whl", hash = "sha256:35b4016fe4ca19b3bfc7d50c6c0742619f2a3f64ebe31c3a53538636db478bef"},
+    {file = "chordy-0.1.0.tar.gz", hash = "sha256:49bfa890070c8f8302a132a29f74994d31e63a437ea079da12cbe66f6bc38aaf"},
 ]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
