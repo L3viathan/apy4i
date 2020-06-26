@@ -1,6 +1,8 @@
-from quart import request, jsonify
+from quart import request, jsonify, Blueprint
 from .storage import Log, Store
 from .utils import elo, timestamp
+
+views = Blueprint("krank", __name__)
 
 PLAYER_HTML = """
 <span class="player" title="{0}" style="background-image: url(avatars/{0}.jpeg);"></span>
@@ -8,16 +10,19 @@ PLAYER_HTML = """
 BEATS_HTML = "⚔️"
 
 
+@views.route("/logs")
 async def klog_html():
     return await klog(html=True)
 
 
+@views.route("/table")
 async def ktable():
     async with Store("krank") as ranks:
         async with Store("krank_hidden") as hidden:
             return jsonify({k: v for (k, v) in ranks.items() if k not in hidden})
 
 
+@views.route("/log.json")
 async def klog(html=False, last=8):
     entries = [entry async for entry in Log("krank")][-last:]
     if html:
@@ -37,6 +42,7 @@ async def klog(html=False, last=8):
     return jsonify(entries)
 
 
+@views.route("/submit", methods=["POST"])
 async def ksubmit():
     data = await request.json
     winners = data["winners"]
