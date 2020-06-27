@@ -1,3 +1,4 @@
+import asks
 from quart import Blueprint, request, abort, jsonify
 from chordy.song import Song
 from chordy.chord import Chord
@@ -23,6 +24,23 @@ async def save():
     song = Song.from_file(filter(bool, data["lines"]))
     song.title = data.get("title")
     return await write_blob(song)
+
+
+@views.route("/scrape", methods=["POST"])
+async def scrape():
+    data = await request.json
+    if not data["url"].startswith("https://tabs.ultimate-guitar.com/"):
+        abort(404)
+    r = await asks.get(data["url"])
+    return (
+        r.text.partition("content&quot;:&quot;")[2]
+        .partition("&quot;,&quot")[0]
+        .replace("[ch]", "")
+        .replace("[/ch]", "")
+        .replace("[tab]", "")
+        .replace("[/tab]", "")
+        .replace("\\r\\n", "\n")
+    )
 
 
 @views.route("/show/<identifier>", defaults={"format_": "html"})
