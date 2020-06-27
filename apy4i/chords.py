@@ -15,16 +15,19 @@ async def convert(format_):
     song.title = data.get("title")
     return getattr(song, f"to_{format_}")(flags=data.get("flags", ""))
 
+
 @views.route("/detect/<path:chord>")
 async def detect(chord):
     chord = chord.rstrip("/")
     if not Chord.is_chord(chord):
         return (404, "No such chord found")
     chord = Chord.from_string(chord)
-    return jsonify({
-        "tone": chord.tone,
-        "minor": chord.minor,
-        "bass": chord.bass,
-        "modifiers": chord.modifiers,
-        "optional": chord.optional,
-    })
+    return jsonify(
+        {
+            "tone": chord.tone,
+            "minor": chord.minor,
+            "bass": chord.bass,
+            "modifiers": chord.modifiers,
+            "optional": chord.optional,
+        }
+    )
