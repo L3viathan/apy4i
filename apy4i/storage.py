@@ -1,10 +1,13 @@
 import json
+import uuid
+import pickle
 from trio import Semaphore, Path
 
 locks = {"kv": {}, "log": {}}
 
 STORE_PATH = Path("store")
 LOGS_PATH = Path("logs")
+BLOB_PATH = Path("blobs")
 
 
 class Store:
@@ -72,3 +75,35 @@ class Log:
         async with await self.path.open() as f:
             async for line in f:
                 yield json.loads(line)
+
+
+async def write_blob(data):
+    # automatic mode?
+    identifier = uuid.uuid4().hex
+    if isinstance(data, str):
+        fmode, conversion, mode = "w", None, "string"
+    elif isinstance(data, bytes):
+        fmode, conversion, mode = "wb", None, "bytes"
+    else:
+        fmode, conversion, mode = "wb", pickle.dumps, "pickle"
+
+    conversion = conversion or (lambda x: x)
+
+    async with await (BLOB_PATH / identifier).open(fmode) as f:
+        await f.write(conversion(data))
+
+    async with Store("blobs") as s:
+        s[identifier] = mode
+    return identifier
+
+
+async def read_blob(identifier, mode="auto"):
+    # raw, string, pickle?
+    if mode == "auto":
+        async with Store("blobs") as s:
+            mode = s[identifier]
+
+    fmode = "r" if mode == "string" else "rb"
+    conversion = pickle.loads if mode == "pickle" else (lambda x: x)
+    async with await (BLOB_PATH / identifier).open(fmode) as f:
+        return conversion(await f.read())
