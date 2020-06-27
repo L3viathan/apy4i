@@ -1,3 +1,4 @@
+import html
 import asks
 from quart import Blueprint, request, abort, jsonify
 from chordy.song import Song
@@ -32,7 +33,7 @@ async def scrape():
     if not data["url"].startswith("https://tabs.ultimate-guitar.com/"):
         abort(404)
     r = await asks.get(data["url"])
-    return (
+    return html.unescape(
         r.text.partition("content&quot;:&quot;")[2]
         .partition("&quot;,&quot")[0]
         .replace("[ch]", "")
