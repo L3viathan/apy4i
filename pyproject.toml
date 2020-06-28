@@ -10,7 +10,7 @@ quart_trio = "^0.5.1"
 textflip = "^0.3.0"
 asks = "^2.3.7"
 hypercorn = "^0.10.1"
-chordy = "^0.1.0"
+chordy = "0.2.0"
 
 [tool.poetry.dev-dependencies]
 ipython = "^7.15.0"

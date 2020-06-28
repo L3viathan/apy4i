@@ -143,7 +143,7 @@ description = "Small library to work with chords and chord-annotated songs"
 name = "chordy"
 optional = false
 python-versions = ">=3.8,<4.0"
-version = "0.1.0"
+version = "0.2.0"
 
 [package.dependencies]
 click = ">=7.1.2,<8.0.0"
@@ -657,7 +657,7 @@ version = "0.15.0"
 h11 = ">=0.8.1"
 
 [metadata]
-content-hash = "c89eb7a1a4aa0a07695ffe44278269893a023a57a0e5d8c09cc0c7670e881a3c"
+content-hash = "f33fdd7766d616f5be63ad1b7db8ec732725ea81b3a35c0c6e0a210c6462a84a"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -734,8 +734,8 @@ cffi = [
     {file = "cffi-1.14.0.tar.gz", hash = "sha256:2d384f4a127a15ba701207f7639d94106693b6cd64173d6c8988e2c25f3ac2b6"},
 ]
 chordy = [
-    {file = "chordy-0.1.0-py3-none-any.whl", hash = "sha256:35b4016fe4ca19b3bfc7d50c6c0742619f2a3f64ebe31c3a53538636db478bef"},
-    {file = "chordy-0.1.0.tar.gz", hash = "sha256:49bfa890070c8f8302a132a29f74994d31e63a437ea079da12cbe66f6bc38aaf"},
+    {file = "chordy-0.2.0-py3-none-any.whl", hash = "sha256:43750d97b1a04f853cb46dad5cfe31c10c2d447425e81cc55c614e97c4c0f1fa"},
+    {file = "chordy-0.2.0.tar.gz", hash = "sha256:fcfb07d6527584b4b75005832318ce9952843a5f21b220a252ed5314d2dc8797"},
 ]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
