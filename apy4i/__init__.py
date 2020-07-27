@@ -75,6 +75,14 @@ async def log(key):
         return ("No content", "204")
 
 
+@app.route("/mopidy", methods=["POST"])
+@simple_token("MOPIDY_TOKEN")
+async def mopidy(key):
+    async with Log("mopidy") as l:
+        await l.log(await request.json)
+        return ("No content", "204")
+
+
 @debug_route("/logs")
 async def logs():
     entries = []
