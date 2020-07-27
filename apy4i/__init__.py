@@ -77,7 +77,7 @@ async def log(key):
 
 @app.route("/mopidy", methods=["POST"])
 @simple_token("MOPIDY_TOKEN")
-async def mopidy(key):
+async def mopidy():
     async with Log("mopidy") as l:
         await l.log(await request.json)
         return ("No content", "204")
