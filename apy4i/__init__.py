@@ -79,7 +79,9 @@ async def log(key):
 @simple_token("MOPIDY_TOKEN")
 async def mopidy():
     async with Log("mopidy") as l:
-        await l.log(await request.json)
+        data = await request.json
+        data["ts"] = timestamp()
+        await l.log(data)
         return ("No content", "204")
 
 
