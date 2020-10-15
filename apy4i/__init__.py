@@ -1,10 +1,10 @@
 import os
 import logging
+import subprocess
 from functools import wraps
 
 from quart_trio import QuartTrio
 from quart import request, jsonify
-from sh import git
 from trio import sleep
 
 from textflip import flip
@@ -93,7 +93,7 @@ async def github():
     if data["ref"] != "refs/heads/master":
         return ("No content", "204")
     if data["repository"]["full_name"].lower() == "l3viathan/jonathan.oberlaen.de":
-        git("--git-dir=/var/www/jonathan.oberlaen.de/r/.git", "pull")
+        subprocess.check_call(["git", "-C", "/var/www/jonathan.oberlaen.de/r", "pull"])
         return ("No content", "202")
     return ("Unknown repo", "204")
 
