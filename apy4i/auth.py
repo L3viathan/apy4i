@@ -22,7 +22,7 @@ def signing_secret(signing_secret_env):
             expected = signature[len(version) + 1 :]
             actual = h.hexdigest()
             if actual != expected:
-                abort(403)
+                abort(401)
             return await afn(*args, **kwargs)
         return wrapper
     return decorator
@@ -40,8 +40,9 @@ def github_hmac(github_secret_env):
                 hashlib.sha256,
             )
             actual = h.hexdigest()
-            if actual != expected:
-                abort(403)
+            if actual != expected[len("sha256="):]:
+                # abort(401)
+                return f"Actual: {actual}", "401"
             return await afn(*args, **kwargs)
         return wrapper
     return decorator
@@ -53,7 +54,7 @@ def simple_token(token_env):
         async def wrapper(*args, **kwargs):
             token = request.headers.get("X-Token")
             if token is None or os.environ.get(token_env) != token:
-                abort(403)
+                abort(401)
             return await afn(*args, **kwargs)
         return wrapper
     return decorator
