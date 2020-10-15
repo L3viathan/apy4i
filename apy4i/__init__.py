@@ -93,7 +93,7 @@ async def github():
     if data["ref"] != "refs/heads/master":
         return ("No content", "204")
     if data["repository"]["full_name"].lower() == "l3viathan/jonathan.oberlaen.de":
-        git("--git-dir=/var/www/jonathan.oberlaen.de/r", "pull")
+        git("--git-dir=/var/www/jonathan.oberlaen.de/r/.git", "pull")
         return ("No content", "202")
     return ("Unknown repo", "204")
 
