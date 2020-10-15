@@ -1,8 +1,9 @@
 import os
 import hmac
 import hashlib
-from quart import request, abort
 from functools import wraps
+
+from quart import request, abort
 
 def signing_secret(signing_secret_env):
     def decorator(afn):
@@ -19,6 +20,25 @@ def signing_secret(signing_secret_env):
                 hashlib.sha256,
             )
             expected = signature[len(version) + 1 :]
+            actual = h.hexdigest()
+            if actual != expected:
+                abort(403)
+            return await afn(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def github_hmac(github_secret_env):
+    def decorator(afn):
+        @wraps(afn)
+        async def wrapper(*args, **kwargs):
+            body = await request.get_data()
+            expected = request.headers.get("X-Hub-Signature-256")
+            h = hmac.new(
+                os.environ.get(github_secret_env).encode("utf-8"),
+                body,
+                hashlib.sha256,
+            )
             actual = h.hexdigest()
             if actual != expected:
                 abort(403)

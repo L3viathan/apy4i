@@ -4,6 +4,7 @@ from functools import wraps
 
 from quart_trio import QuartTrio
 from quart import request, jsonify
+from sh import git
 from trio import sleep
 
 from textflip import flip
@@ -11,7 +12,7 @@ from .slack import slack
 from .storage import Store, Log
 from .utils import timestamp, elo as _elo
 from .krank import views as krank_views
-from .auth import simple_token
+from .auth import simple_token, github_hmac
 from .chords import views as chord_views
 
 logging.basicConfig(
@@ -83,6 +84,18 @@ async def mopidy():
         data["ts"] = timestamp()
         await l.log(data)
         return ("No content", "204")
+
+
+@app.route("/github", methods=["POST"])
+@github_hmac("GITHUB_SECRET")
+async def github():
+    data = await request.json
+    if data["ref"] != "refs/heads/master":
+        return ("No content", "204")
+    if data["repository"]["full_name"].lower() == "l3viathan/jonathan.oberlaen.de":
+        git("--git-dir=/var/www/jonathan.oberlaen.de/r", "pull")
+        return ("No content", "202")
+    return ("Unknown repo", "204")
 
 
 @debug_route("/logs")

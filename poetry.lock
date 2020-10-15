@@ -526,6 +526,14 @@ python-versions = "*"
 version = "2020.6.8"
 
 [[package]]
+category = "main"
+description = "Python subprocess replacement"
+name = "sh"
+optional = false
+python-versions = "*"
+version = "1.14.0"
+
+[[package]]
 category = "dev"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
@@ -657,7 +665,7 @@ version = "0.15.0"
 h11 = ">=0.8.1"
 
 [metadata]
-content-hash = "f33fdd7766d616f5be63ad1b7db8ec732725ea81b3a35c0c6e0a210c6462a84a"
+content-hash = "0c592526ee276153e8d63ca376333d5b462d06df8896ab038ccfe9c6217a3aa3"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -936,6 +944,10 @@ regex = [
     {file = "regex-2020.6.8-cp38-cp38-win32.whl", hash = "sha256:97712e0d0af05febd8ab63d2ef0ab2d0cd9deddf4476f7aa153f76feef4b2754"},
     {file = "regex-2020.6.8-cp38-cp38-win_amd64.whl", hash = "sha256:6ad8663c17db4c5ef438141f99e291c4d4edfeaacc0ce28b5bba2b0bf273d9b5"},
     {file = "regex-2020.6.8.tar.gz", hash = "sha256:e9b64e609d37438f7d6e68c2546d2cb8062f3adb27e6336bc129b51be20773ac"},
+]
+sh = [
+    {file = "sh-1.14.0-py2.py3-none-any.whl", hash = "sha256:4219d338349581a07cd1358c1d7de0fa57bb5d44e547cc87b0da7d5349705030"},
+    {file = "sh-1.14.0.tar.gz", hash = "sha256:05c7e520cdf70f70a7228a03b589da9f96c6e0d06fc487ab21fc62b26a592e59"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
