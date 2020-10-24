@@ -89,7 +89,7 @@ def make_target(*, target=None, type="timeseries", refId="A", data=None):
 @views.route("/")
 @simple_token("GRAFANA_TOKEN")
 async def grafana_index():
-    return 200, ""
+    return "", 200
 
 
 @views.route("/search", methods=["POST"])
