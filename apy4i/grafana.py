@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+import json
+from datetime import datetime, timezone, timedelta
 from quart import request, jsonify, Blueprint, abort
 from .auth import simple_token
 
@@ -32,6 +33,7 @@ def to_grafana_value(some_value):
         return some_value
     if isinstance(some_value, datetime):
         return int(some_value.timestamp() * 1000)
+    raise RuntimeError(f"Unknown value type {type(some_value)}: {some_value}")
     abort(500)
 
 
@@ -44,19 +46,20 @@ def get_timeseries(target):
     if target == "languageday":
         now = datetime.now().astimezone(timezone.utc)
         yield [
-            "german/romanian",
             "german",
             "german",
             "german",
             "romanian",
             "free",
             "german/romanian",
-        ], now
+            "german/romanian",
+        ][now.weekday()], now - timedelta(hours=3)
     else:
+        raise RuntimeError(f"Unknown target {target}")
         abort(400)
 
 
-def make_target(*, target=None, type="timeseries", refId="A", data=None):
+def make_target(*, target=None, type="timeseries", refId="A", data=None, datasource=None):
     # return a single JSON object
     if type == "timeseries":
         data = get_timeseries(target)
@@ -83,6 +86,7 @@ def make_target(*, target=None, type="timeseries", refId="A", data=None):
                 for elements in zip(*(data[key] for key in keys))
             ],
         }
+    raise RuntimeError(f"Unknown type {type}")
     abort(400)
 
 
@@ -95,19 +99,21 @@ async def grafana_index():
 @views.route("/search", methods=["POST"])
 @simple_token("GRAFANA_TOKEN")
 async def grafana_search():
-    return jsonify([])
+    return jsonify(["languageday"])
 
 
 @views.route("/query", methods=["POST"])
 @simple_token("GRAFANA_TOKEN")
 async def grafana_query():
-    data = await request.get_data()
+    data = json.loads((await request.get_data()).decode("utf-8"))
     # ignoring these for now; FIXME
     start, stop = get_time_range(data.get("range"))
-    interval = data["intervalMs"] / 1000
+    interval = int(data.get("intervalMs", 0)) / 1000
     filters = data.get("adhocFilters", [])
 
-    return jsonify([make_target(**target) for target in data["targets"]])
+    result = [make_target(**target) for target in data["targets"]]
+    print(result)
+    return jsonify(result)
 
 
 @views.route("/annotations", methods=["POST"])
