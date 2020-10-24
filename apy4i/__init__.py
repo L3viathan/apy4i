@@ -9,6 +9,7 @@ from trio import sleep
 
 from textflip import flip
 from .slack import slack
+from .grafana import views as grafana_views
 from .storage import Store, Log
 from .utils import timestamp, elo as _elo
 from .krank import views as krank_views
@@ -126,6 +127,7 @@ app.route("/slack", methods=["POST"])(slack)
 
 app.register_blueprint(chord_views, url_prefix="/chords")
 app.register_blueprint(krank_views, url_prefix="/krank")
+app.register_blueprint(grafana_views, url_prefix="/grafana")
 
 
 @app.after_request

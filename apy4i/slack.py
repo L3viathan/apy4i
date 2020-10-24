@@ -1,8 +1,7 @@
-import hashlib
 import contextvars
 from urllib.parse import parse_qs
 import asks
-from quart import request, jsonify, abort
+from quart import request, jsonify
 from .storage import Log
 from .auth import signing_secret
 
