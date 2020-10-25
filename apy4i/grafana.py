@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timezone, timedelta
 from quart import request, jsonify, Blueprint, abort
 from .auth import simple_token
+from .storage import Store
 
 views = Blueprint("grafana", __name__)
 
@@ -38,28 +39,33 @@ def to_grafana_value(some_value):
 
 
 def get_table(target):
-    ...
+    if target == "schika":
+        async with Store("schika_ranks") as ranks:
+            players = sorted(
+                ranks, key=lambda player: ranks[player]["score"], reverse=True
+            )
+            scores = [ranks[player] for player in players]
+            return {"player": players, "score": scores}
+    else:
+        raise RuntimeError(f"Unknown target {target}")
+        abort(400)
 
 
 def get_timeseries(target):
     # tuples of value, datetime
     if target == "languageday":
         now = datetime.now().astimezone(timezone.utc)
-        yield [
-            "german",
-            "german",
-            "german",
-            "romanian",
-            "free",
-            "german/romanian",
-            "german/romanian",
-        ][now.weekday()], now - timedelta(hours=3)
+        yield ["🇩🇪", "🇩🇪", "🇩🇪", "🇷🇴", "🏴‍☠️", "🇩🇪/🇷🇴", "🇩🇪/🇷🇴",][
+            now.weekday()
+        ], now - timedelta(hours=3)
     else:
         raise RuntimeError(f"Unknown target {target}")
         abort(400)
 
 
-def make_target(*, target=None, type="timeseries", refId="A", data=None, datasource=None):
+def make_target(
+    *, target=None, type="timeseries", refId="A", data=None, datasource=None
+):
     # return a single JSON object
     if type == "timeseries":
         data = get_timeseries(target)
@@ -99,7 +105,7 @@ async def grafana_index():
 @views.route("/search", methods=["POST"])
 @simple_token("GRAFANA_TOKEN")
 async def grafana_search():
-    return jsonify(["languageday"])
+    return jsonify(["languageday", "schika"])
 
 
 @views.route("/query", methods=["POST"])
