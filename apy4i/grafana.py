@@ -1,5 +1,7 @@
 import json
 from datetime import datetime, timezone, timedelta
+
+import asks
 from quart import request, jsonify, Blueprint, abort
 from .auth import simple_token
 from .storage import Store
@@ -54,13 +56,76 @@ async def get_table(target):
         abort(400)
 
 
-def get_timeseries(target):
+async def get_timeseries(target):
     # tuples of value, datetime
+    now = datetime.now().astimezone(timezone.utc)
     if target == "languageday":
-        now = datetime.now().astimezone(timezone.utc)
         yield ["🇩🇪", "🇩🇪", "🇩🇪", "🇷🇴", "🏴‍☠️", "🇩🇪/🇷🇴", "🇩🇪/🇷🇴",][
             now.weekday()
         ], now - timedelta(hours=3)
+    elif target == "weather":
+        weather_location = os.environ.get("WEATHER_LOCATION", "Stuttgart,BW,DE")
+        weather_api_key = os.environ.get("WEATHER_API_KEY")
+        r = await asks.get(
+            "https://api.openweathermap.org/data/2.5/weather?q={weather_location}&appid={weather_api_key}&units=metric"
+        )
+        yield {
+            200: "⛈",
+            201: "⛈",
+            202: "⛈",
+            230: "⛈",
+            231: "⛈",
+            232: "⛈",
+            210: "🌩",
+            211: "🌩",
+            212: "🌩",
+            221: "🌩",
+            300: "🌧",
+            301: "🌧",
+            302: "🌧",
+            310: "🌧",
+            311: "🌧",
+            312: "🌧",
+            313: "🌧",
+            314: "🌧",
+            321: "🌧",
+            500: "🌧",
+            501: "🌧",
+            502: "🌧",
+            503: "🌧",
+            504: "🌧",
+            511: "🌧",
+            520: "🌧",
+            521: "🌧",
+            522: "🌧",
+            531: "🌧",
+            600: "🌨",
+            601: "🌨",
+            602: "🌨",
+            611: "🌨",
+            612: "🌨",
+            613: "🌨",
+            615: "🌨",
+            616: "🌨",
+            620: "🌨",
+            621: "🌨",
+            622: "🌨",
+            701: "🌫",
+            711: "🌫",
+            721: "🌫",
+            731: "🌫",
+            741: "🌫",
+            751: "🌫",
+            761: "🌫",
+            762: "🌋",
+            771: "🌬",
+            781: "🌪",
+            800: "☀",
+            801: "⛅",
+            802: "⛅",
+            803: "☁",
+            804: "☁",
+        }[r.json()["weather"][0]["id"]], now - timedelta(hours=3)
     else:
         raise RuntimeError(f"Unknown target {target}")
         abort(400)
@@ -71,7 +136,7 @@ async def make_target(
 ):
     # return a single JSON object
     if type == "timeseries":
-        data = get_timeseries(target)
+        data = await get_timeseries(target)
         return {
             "target": target,
             "datapoints": [
@@ -108,7 +173,7 @@ async def grafana_index():
 @views.route("/search", methods=["POST"])
 @simple_token("GRAFANA_TOKEN")
 async def grafana_search():
-    return jsonify(["languageday", "schika"])
+    return jsonify(["languageday", "schika", "weather"])
 
 
 @views.route("/query", methods=["POST"])
