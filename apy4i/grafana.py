@@ -1,3 +1,4 @@
+import os
 import json
 from datetime import datetime, timezone, timedelta
 
@@ -67,7 +68,7 @@ async def get_timeseries(target):
         weather_location = os.environ.get("WEATHER_LOCATION", "Stuttgart,BW,DE")
         weather_api_key = os.environ.get("WEATHER_API_KEY")
         r = await asks.get(
-            "https://api.openweathermap.org/data/2.5/weather?q={weather_location}&appid={weather_api_key}&units=metric"
+            f"https://api.openweathermap.org/data/2.5/weather?q={weather_location}&appid={weather_api_key}&units=metric"
         )
         yield {
             200: "⛈",
@@ -136,13 +137,12 @@ async def make_target(
 ):
     # return a single JSON object
     if type == "timeseries":
-        data = await get_timeseries(target)
         return {
             "target": target,
             "datapoints": [
                 # tuples of data, timestamp in ms
                 [to_grafana_value(value) for value in row]
-                for row in data
+                async for row in get_timeseries(target)
             ],
         }
     elif type == "table":
