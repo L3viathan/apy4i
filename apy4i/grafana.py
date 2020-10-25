@@ -52,6 +52,13 @@ async def get_table(target):
             players = [player for player in players if ranks[player]["active"]]
             scores = [ranks[player]["score"] for player in players]
             return {"player": players, "score": scores}
+    elif target == "corona_vaccine":
+        r = await asks.get("https://disease.sh/v3/covid-19/vaccine")
+        phases, candidates = [], []
+        for phase in r.json()["phases"]:
+            phases.append(phase["phase"])
+            candidates.append(int(phase["candidates"]))
+        return {"phases": phases, "candidates": candidates}
     else:
         raise RuntimeError(f"Unknown target {target}")
         abort(400)
@@ -183,7 +190,7 @@ async def grafana_index():
 @views.route("/search", methods=["POST"])
 @simple_token("GRAFANA_TOKEN")
 async def grafana_search():
-    return jsonify(["languageday", "schika", "weather", "corona_cases", "corona_deaths", "corona_recovered"])
+    return jsonify(["languageday", "schika", "weather", "corona_cases", "corona_deaths", "corona_recovered", "corona_vaccine"])
 
 
 @views.route("/query", methods=["POST"])
