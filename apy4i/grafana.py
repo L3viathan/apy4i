@@ -20,6 +20,8 @@ def get_time_range(the_range):
 
 
 def to_grafana_type(some_type):
+    if isinstance(some_type, list):
+        some_type = type(some_type[0])
     return {
         int: "number",
         float: "number",
@@ -38,13 +40,14 @@ def to_grafana_value(some_value):
     abort(500)
 
 
-def get_table(target):
+async def get_table(target):
     if target == "schika":
         async with Store("schika_ranks") as ranks:
             players = sorted(
                 ranks, key=lambda player: ranks[player]["score"], reverse=True
             )
-            scores = [ranks[player] for player in players]
+            players = [player for player in players if ranks[player]["active"]]
+            scores = [ranks[player]["score"] for player in players]
             return {"player": players, "score": scores}
     else:
         raise RuntimeError(f"Unknown target {target}")
@@ -63,7 +66,7 @@ def get_timeseries(target):
         abort(400)
 
 
-def make_target(
+async def make_target(
     *, target=None, type="timeseries", refId="A", data=None, datasource=None
 ):
     # return a single JSON object
@@ -78,7 +81,7 @@ def make_target(
             ],
         }
     elif type == "table":
-        data = get_table(target)
+        data = await get_table(target)
         keys = list(data)
         return {
             "type": "table",
@@ -117,7 +120,7 @@ async def grafana_query():
     interval = int(data.get("intervalMs", 0)) / 1000
     filters = data.get("adhocFilters", [])
 
-    result = [make_target(**target) for target in data["targets"]]
+    result = [await make_target(**target) for target in data["targets"]]
     print(result)
     return jsonify(result)
 
