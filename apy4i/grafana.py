@@ -57,6 +57,10 @@ async def get_table(target):
         abort(400)
 
 
+def stupid_date_to_normal(datestr):
+    return datetime.strptime(datestr, "%m/%d/%y")
+
+
 async def get_timeseries(target):
     # tuples of value, datetime
     now = datetime.now().astimezone(timezone.utc)
@@ -127,6 +131,12 @@ async def get_timeseries(target):
             803: "☁",
             804: "☁",
         }[r.json()["weather"][0]["id"]], now - timedelta(hours=3)
+    elif target.startswith("corona_"):
+        stat = target.split("_")[-1]
+        r = await asks.get("https://disease.sh/v3/covid-19/historical/DEU")
+        data = r.json()
+        for day in sorted(data["timeline"][stat], key=stupid_date_to_normal):
+            yield data["timeline"][stat][day], stupid_date_to_normal(day)
     else:
         raise RuntimeError(f"Unknown target {target}")
         abort(400)
@@ -173,7 +183,7 @@ async def grafana_index():
 @views.route("/search", methods=["POST"])
 @simple_token("GRAFANA_TOKEN")
 async def grafana_search():
-    return jsonify(["languageday", "schika", "weather"])
+    return jsonify(["languageday", "schika", "weather", "corona_cases", "corona_deaths", "corona_recovered"])
 
 
 @views.route("/query", methods=["POST"])
