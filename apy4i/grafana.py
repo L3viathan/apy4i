@@ -135,8 +135,8 @@ async def get_timeseries(target):
             800: "☀",
             801: "⛅",
             802: "⛅",
-            803: "☁",
-            804: "☁",
+            803: "☁️",
+            804: "☁️",
         }[r.json()["weather"][0]["id"]], now - timedelta(hours=3)
     elif target.startswith("corona_"):
         stat = target.split("_")[-1]
@@ -190,7 +190,17 @@ async def grafana_index():
 @views.route("/search", methods=["POST"])
 @simple_token("GRAFANA_TOKEN")
 async def grafana_search():
-    return jsonify(["languageday", "schika", "weather", "corona_cases", "corona_deaths", "corona_recovered", "corona_vaccine"])
+    return jsonify(
+        [
+            "languageday",
+            "schika",
+            "weather",
+            "corona_cases",
+            "corona_deaths",
+            "corona_recovered",
+            "corona_vaccine",
+        ]
+    )
 
 
 @views.route("/query", methods=["POST"])
