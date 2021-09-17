@@ -472,7 +472,7 @@ isort = ">=4.2.5,<5"
 
 [[package]]
 name = "quart"
-version = "0.12.0"
+version = "0.14.1"
 description = "A Python ASGI web microframework with the same API as Flask"
 category = "main"
 optional = false
@@ -493,14 +493,14 @@ dotenv = ["python-dotenv"]
 
 [[package]]
 name = "quart-trio"
-version = "0.5.1"
+version = "0.7.0"
 description = "A Quart extension to provide trio support."
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 
 [package.dependencies]
-quart = ">=0.11.1"
+quart = ">=0.14.0"
 trio = ">=0.9.0"
 hypercorn = {version = ">=0.6.0", extras = ["trio"]}
 
@@ -654,7 +654,7 @@ h11 = ">=0.8.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "275e5aee40ef4a77bbbe6841591b40704b72e177cf54c3c2d838ea60188b880a"
+content-hash = "62fc321721f67bc885992fe773e263bcb82624fb42be9670d1b323f10aaabf1c"
 
 [metadata.files]
 aiofiles = [
@@ -903,12 +903,12 @@ pylint = [
     {file = "pylint-2.5.3.tar.gz", hash = "sha256:7dd78437f2d8d019717dbf287772d0b2dbdfd13fc016aa7faa08d67bccc46adc"},
 ]
 quart = [
-    {file = "Quart-0.12.0-py3-none-any.whl", hash = "sha256:f706e6eff0ef756b88d9965359f7445c9c2773551dca822deb8c018c58c00902"},
-    {file = "Quart-0.12.0.tar.gz", hash = "sha256:99a65bc90d0e1260c9cc9a7dd0b8523eb6cd9f4ec146e771e98a55ee180ae6c2"},
+    {file = "Quart-0.14.1-py3-none-any.whl", hash = "sha256:7b13786e07541cc9ce1466fdc6a6ccd5f36eb39118edd25a42d617593cd17707"},
+    {file = "Quart-0.14.1.tar.gz", hash = "sha256:429c5b4ff27e1d2f9ca0aacc38f6aba0ff49b38b815448bf24b613d3de12ea02"},
 ]
 quart-trio = [
-    {file = "Quart-Trio-0.5.1.tar.gz", hash = "sha256:dafc8f0440d4b70fa60d24122a161d2373894d2bfa9f713d9f1df1fd508f0834"},
-    {file = "Quart_Trio-0.5.1-py3-none-any.whl", hash = "sha256:00f3b20f8d82ce7e81ead61db4efba38ed7653c7e28199defded46b663ab2595"},
+    {file = "Quart-Trio-0.7.0.tar.gz", hash = "sha256:933e3c18e232ece30ccbac7579fdc5f62f2f9c79c3273d6c341f5a1686791eb1"},
+    {file = "Quart_Trio-0.7.0-py3-none-any.whl", hash = "sha256:1e7fce0df41afc3038bf0431b20614f90984de50341b19f9d4d3b9ba1ac7574a"},
 ]
 regex = [
     {file = "regex-2020.6.8-cp27-cp27m-win32.whl", hash = "sha256:fbff901c54c22425a5b809b914a3bfaf4b9570eee0e5ce8186ac71eb2025191c"},
