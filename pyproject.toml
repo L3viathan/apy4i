@@ -8,10 +8,10 @@ authors = ["L3viathan <git@l3vi.de>"]
 python = "^3.8"
 quart_trio = "*"
 textflip = "^0.3.0"
-asks = "^2.3.7"
-hypercorn = "^0.10.1"
-chordy = "0.4.1"
-sh = "^1.14.0"
+asks = "*"
+hypercorn = "*"
+chordy = "*"
+sh = "*"
 
 [tool.poetry.dev-dependencies]
 ipython = "^7.15.0"
