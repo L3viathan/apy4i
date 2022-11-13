@@ -36,7 +36,7 @@ async def list():
 @views.route("/resolve/<alert_id>")
 async def resolve(alert_id):
     async with Store("alerts") as alerts:
-        alerts.pop(alert_id)
+        return alerts.pop(alert_id)
 
 
 @views.route("/beat")
@@ -50,10 +50,11 @@ async def beat():
             elif alert["status"] == "warned" and alert["error_at"] <= now:
                 await send(alert_id, alert, "error")
                 alert["status"] = "errored"
+    return {}
 
 
 async def send(alert_id, alert, severity):
-    await asks.post(
+    await r = asks.post(
         "https://ntfy.sh/{alert[severity + '_topic']}",
         json={
             "topic": alert[f"{severity}_topic"],
@@ -69,3 +70,4 @@ async def send(alert_id, alert, severity):
             ],
         },
     )
+    r.raise_for_status()
