@@ -28,7 +28,7 @@ async def create():
 
 
 @views.route("/list")
-async def list(alert_id):
+async def list():
     async with Store("alerts") as alerts:
         return alerts
 
