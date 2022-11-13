@@ -54,7 +54,7 @@ async def beat():
 
 
 async def send(alert_id, alert, severity):
-    await r = asks.post(
+    r = await asks.post(
         "https://ntfy.sh/{alert[severity + '_topic']}",
         json={
             "topic": alert[f"{severity}_topic"],
