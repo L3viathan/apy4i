@@ -16,8 +16,8 @@ async def create():
     alert = {
         "title": str(data["title"]),
         "description": str(data.get("description")),
-        "warning_at": warning_at,
-        "error_at": error_at,
+        "warning_at": warning_at.timestamp(),
+        "error_at": error_at.timestamp(),
         "warning_topic": str(data["topic"]),
         "error_topic": "vizuina-alerts",
         "status": "waiting",
@@ -41,7 +41,7 @@ async def resolve(alert_id):
 
 @views.route("/beat")
 async def beat():
-    now = datetime.utcnow()
+    now = datetime.utcnow().timestamp()
     async with Store("alerts") as alerts:
         for alert_id, alert in alerts.items():
             if alert["status"] == "waiting" and alert["warning_at"] <= now:
