@@ -15,6 +15,7 @@ from .utils import timestamp, elo as _elo
 from .krank import views as krank_views
 from .auth import simple_token, github_hmac
 from .chords import views as chord_views
+from .alerts import views as alert_views
 
 logging.basicConfig(
     filename="api.log", level=logging.INFO, format="%(asctime)s\t%(message)s"
@@ -128,6 +129,7 @@ app.route("/slack", methods=["POST"])(slack)
 app.register_blueprint(chord_views, url_prefix="/chords")
 app.register_blueprint(krank_views, url_prefix="/krank")
 app.register_blueprint(grafana_views, url_prefix="/grafana")
+app.register_blueprint(alert_views, url_prefix="/alerts")
 
 
 @app.after_request
