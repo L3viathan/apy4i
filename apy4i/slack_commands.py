@@ -44,7 +44,7 @@ async def help(user, text):
 
 async def eval(user, text):
     r = await asks.post("http://localhost:8060/eval", json={"input": text.strip().strip("`")})
-    if not r.ok:
+    if r.status_code != 200:
         return await in_channel("Failed to execute")
     r = r.json()
     return await attachment(text=r["stdout"], title=f"Result ({r['returncode']}):")
