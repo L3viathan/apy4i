@@ -1,3 +1,4 @@
+import asks
 from quart import abort
 from textflip import flip as flop
 from .slack import in_channel, ephemeral, attachment
@@ -39,6 +40,11 @@ async def default_command(user, text):
 
 async def help(user, text):
     return await ephemeral("Available commands: ...")
+
+
+async def eval(user, text):
+    r = await asks.post("http://localhost:8060/eval", json={"input": text.strip().strip("`")})
+    return await attachment(text=text, title=f"Result ({r['returncode']}):")
 
 
 async def _table(ranks, simulation=False):
