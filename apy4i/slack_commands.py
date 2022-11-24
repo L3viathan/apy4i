@@ -44,7 +44,10 @@ async def help(user, text):
 
 async def eval(user, text):
     r = await asks.post("http://localhost:8060/eval", json={"input": text.strip().strip("`")})
-    return await attachment(text=text, title=f"Result ({r['returncode']}):")
+    if not r.ok:
+        return await in_channel("Failed to execute")
+    r = r.json()
+    return await attachment(text=r["stdout"], title=f"Result ({r['returncode']}):")
 
 
 async def _table(ranks, simulation=False):
