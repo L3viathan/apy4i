@@ -17,6 +17,7 @@ from .auth import simple_token, github_hmac
 from .chords import views as chord_views
 from .alerts import views as alert_views
 from .foodsched import views as foodsched_views
+from .mls7 import views as mls7_views
 
 logging.basicConfig(
     filename="api.log", level=logging.INFO, format="%(asctime)s\t%(message)s"
@@ -132,6 +133,7 @@ app.register_blueprint(krank_views, url_prefix="/krank")
 app.register_blueprint(grafana_views, url_prefix="/grafana")
 app.register_blueprint(alert_views, url_prefix="/alerts")
 app.register_blueprint(foodsched_views, url_prefix="/food")
+app.register_blueprint(mls7_views, url_prefix="/mls7")
 
 
 @app.after_request

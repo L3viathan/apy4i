@@ -12,6 +12,7 @@ asks = "*"
 hypercorn = "*"
 chordy = "*"
 sh = "*"
+vvspy = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 ipython = "^7.15.0"
