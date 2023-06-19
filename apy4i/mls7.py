@@ -64,8 +64,8 @@ async def get_departures():
             "city-bound": departure["city-bound"],
             "direction": departure["direction"],
             "stop": departure["stop"],
-            "reachable": now + timedelta(minutes=departure["walking_minutes"]) <= departure.real_datetime,
-            "countdown": int((departure.real_datetime - now).total_seconds() // 60),
+            "reachable": now + timedelta(minutes=departure["walking_minutes"]) <= departure["datetime"],
+            "countdown": int((departure["datetime"] - now).total_seconds() // 60),
         })
     departures = "\n".join(
         f"""<li>
