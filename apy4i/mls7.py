@@ -21,30 +21,23 @@ CITY_DIRECTIONS = "Botnang", "Marienplatz", "Vaihingen", "Charlottenplatz", "Vog
 
 
 @cached(max_age=timedelta(minutes=2))
-def _get_departures(max_distance=timedelta(minutes=20), min_results=5):
+def _get_departures():
     departures = []
-    now = datetime.now()
     for station, walking_minutes in STOPS:
         for departure in vvspy.get_departures(station, limit=5):
             direction = departure.serving_line.direction
             departures.append(
                 {
                     "datetime": departure.real_datetime,
-                    "reachable": now + timedelta(minutes=walking_minutes) <= departure.real_datetime,
                     "direction": direction,
                     "line": departure.serving_line.number,
                     "city-bound": direction in CITY_DIRECTIONS,
                     "stop": departure.stop_name,
-                    "countdown": departure.countdown,
+                    "walking_minutes": walking_minutes,
                 }
             )
     departures.sort(key=lambda d: d["datetime"])
-    result = []
-    for departure in departures:
-        if len(result) >= min_results and departure["datetime"] > (now + max_distance):
-            continue
-        result.append(departure)
-    return result
+    return departures
 
 
 @cached(max_age=timedelta(hours=2))
@@ -60,6 +53,20 @@ def _get_biergarten_event():
 
 @views.route("/departures")
 async def get_departures():
+    now = datetime.now()
+    departures = _get_departures()
+    result = []
+    for departure in departures:
+        if len(result) >= 3 and departure["datetime"] > (now + timedelta(minutes=20)):
+            continue
+        result.append({
+            "line": departure["line"],
+            "city-bound": departure["city-bound"],
+            "direction": departure["direction"],
+            "stop": departure["stop"],
+            "reachable": now + timedelta(minutes=departure["walking_minutes"]) <= departure.real_datetime,
+            "countdown": int((departure.real_datetime - now).total_seconds() // 60),
+        })
     departures = "\n".join(
         f"""<li>
             <span class='u'>U</span>{d['line'].strip('U')}
@@ -67,7 +74,8 @@ async def get_departures():
             (<span class='reachable-{d['reachable'] and 'yes' or 'no'}'>in {d['countdown']}&rsquo;</span>)
             <small>[{d['stop']}]</small>
             </li>"""
-        for d in _get_departures(max_distance=timedelta(minutes=20), min_results=3)
+        for d in result
+        if d["countdown"] >= 0
     )
     return f"""<h3>Departures</h3>
     <ul>
