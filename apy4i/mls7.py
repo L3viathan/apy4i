@@ -24,12 +24,10 @@ def _get_departures(max_distance=timedelta(minutes=20), min_results=5):
     for station, walking_minutes in STOPS:
         for departure in vvspy.get_departures(station, limit=5):
             direction = departure.serving_line.direction
-            if len(departures) >= min_results and departure.datetime > (now + max_distance):
-                continue
             departures.append(
                 {
-                    "datetime": departure.datetime,
-                    "reachable": now + timedelta(minutes=walking_minutes) <= departure.datetime,
+                    "datetime": departure.real_datetime,
+                    "reachable": now + timedelta(minutes=walking_minutes) <= departure.real_datetime,
                     "direction": direction,
                     "line": departure.serving_line.number,
                     "city-bound": direction in CITY_DIRECTIONS,
@@ -38,7 +36,12 @@ def _get_departures(max_distance=timedelta(minutes=20), min_results=5):
                 }
             )
     departures.sort(key=lambda d: d["datetime"])
-    return departures
+    result = []
+    for departure in departures:
+        if len(result) >= min_results and departure["datetime"] > (now + max_distance):
+            continue
+        result.append(departure)
+    return result
 
 
 def _get_biergarten_event():
