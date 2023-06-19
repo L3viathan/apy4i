@@ -5,6 +5,8 @@ from quart import Blueprint, request
 import requests
 import vvspy
 
+from .utils import cached
+
 
 # TODO: https://stuttgarterbaeder.de/baeder/jsonData/baeder.json
 
@@ -18,6 +20,7 @@ STOPS = [
 CITY_DIRECTIONS = "Botnang", "Marienplatz", "Vaihingen", "Charlottenplatz", "Vogelsang"
 
 
+@cached(max_age=timedelta(minutes=2))
 def _get_departures(max_distance=timedelta(minutes=20), min_results=5):
     departures = []
     now = datetime.now()
@@ -44,6 +47,7 @@ def _get_departures(max_distance=timedelta(minutes=20), min_results=5):
     return result
 
 
+@cached(max_age=timedelta(hours=2))
 def _get_biergarten_event():
     r = requests.get("https://www.augustiner-biergarten-stuttgart.de/home/")
     events = re.findall(r'schema.org/Event.*?itemprop="startDate" content="([^"]+)".*?feed_title" itemprop="name">([^<]+)', r.text)
