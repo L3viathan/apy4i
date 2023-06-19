@@ -104,12 +104,13 @@ async def index():
             }
             .card {
                 display: inline-block;
-                width: calc(50% - 60px);
+                width: 100vw;
                 padding: 1em;
                 border-radius: 15px;
                 margin: 10px;
                 background: #ddd;
                 text-align: left;
+                font-size: x-large;
             }
             .u {
                 color: #0e519d;
