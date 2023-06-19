@@ -41,3 +41,4 @@ def cached(max_age=timedelta(minutes=5)):
             return entry
         return wrapper
     return decorator
+cached.entries = {}
