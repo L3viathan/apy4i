@@ -104,7 +104,7 @@ async def index():
             }
             .card {
                 display: inline-block;
-                width: 300px;
+                width: calc(50% - 60px);
                 padding: 1em;
                 border-radius: 15px;
                 margin: 10px;
