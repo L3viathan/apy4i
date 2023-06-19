@@ -15,7 +15,7 @@ STOPS = [
     ("de:08111:32", 5),  # Uff-Kirchhof
 ]
 
-CITY_DIRECTIONS = "Botnang", "Marienplatz", "Vaihingen", "Charlottenplatz"
+CITY_DIRECTIONS = "Botnang", "Marienplatz", "Vaihingen", "Charlottenplatz", "Vogelsang"
 
 
 def _get_departures(max_distance=timedelta(minutes=20), min_results=5):
