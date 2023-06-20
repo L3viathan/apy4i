@@ -58,7 +58,7 @@ async def get_swimming_pool():
     parts = []
     for part in hours:
         part_open = is_open(part)
-        parts.append(f"<li><span class='open-{part_open and "yes" or "no"}'>·</span> {part_open and "Offen" or "Geschlossen}</li>")
+        parts.append(f"<li><span class='open-{part_open and 'yes' or 'no'}'>·</span> {part_open and 'Offen' or 'Geschlossen'}</li>")
     return f"""<h3>SoleBad</h3>
     <ul>
     {" ".join(parts)}
