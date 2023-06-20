@@ -54,11 +54,11 @@ def _get_pool_info():
 async def get_swimming_pool():
     pool_data = _get_pool_info()
     solebad = next(part for part in pool_data if part["name"] == "SoleBad Cannstatt")
-    hours = [h for t in j[0]["businesshours"].values() for h in t if is_valid(h["validity"])]
+    hours = [h for t in solebad["businesshours"].values() for h in t if is_valid(h["validity"])]
     parts = []
     for part in hours:
         part_open = is_open(part)
-        parts.append(f"<li><span class='open-{part_open and 'yes' or 'no'}'>·</span> {part_open and 'Offen' or 'Geschlossen'}</li>")
+        parts.append(f"<li><span class='open-{part_open and 'yes' or 'no'}'>\u2b24</span> {part['typeTitle']}</li>")
     return f"""<h3>SoleBad</h3>
     <ul>
     {" ".join(parts)}
