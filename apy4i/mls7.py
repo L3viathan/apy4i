@@ -19,6 +19,51 @@ STOPS = [
 
 CITY_DIRECTIONS = "Botnang", "Marienplatz", "Vaihingen", "Charlottenplatz", "Vogelsang"
 
+def is_valid(v):
+    return datetime.strptime(v["from"], "%Y-%m-%d") <= datetime.now() < datetime.strptime(v["to"], "%Y-%m-%d")
+
+
+def dt_replace(dt, t):
+    return datetime.strptime(f"{dt:%Y-%m-%d}T{t}", "%Y-%m-%dT%H:%M")
+
+
+def is_open(p):
+    now = datetime.now()
+    for suffix in ("", "1", "2"):
+        key = {
+            "Mon": "mo",
+            "Tue": "di",
+            "Wed": "mi",
+            "Thu": "do",
+            "Fri": "fr",
+            "Sat": "sa",
+            "Sun": "so",
+        }[f"{now:%a}"] + suffix
+        if times := p[key]:
+            if dt_replace(now, times["from"]) <= now < dt_replace(now, times["to"]):
+                return True
+    return False
+
+
+@cached(max_age=timedelta(hours=2))
+def _get_pool_info():
+    return requests.get("https://stuttgarterbaeder.de/baeder/jsonData/baeder.json").json()
+
+
+@views.route("/swimming-pool")
+async def get_swimming_pool():
+    pool_data = _get_pool_info()
+    solebad = next(part for part in pool_data if part["name"] == "SoleBad Cannstatt")
+    hours = [h for t in j[0]["businesshours"].values() for h in t if is_valid(h["validity"])]
+    parts = []
+    for part in hours:
+        part_open = is_open(part)
+        parts.append(f"<li><span class='open-{part_open and "yes" or "no"}'>·</span> {part_open and "Offen" or "Geschlossen}</li>")
+    return f"""<h3>SoleBad</h3>
+    <ul>
+    {" ".join(parts)}
+    </ul>"""
+
 
 @cached(max_age=timedelta(minutes=2))
 def _get_departures():
@@ -137,6 +182,12 @@ async def index():
             .reachable-no {
                 color: crimson;
             }
+            .open-no {
+                color: crimson;
+            }
+            .open-yes {
+                color: forestgreen;
+            }
         </style>
     </head>
     <body>
@@ -144,6 +195,8 @@ async def index():
             <div class="card" hx-get="/mls7/departures" hx-trigger="load every 30s">
             </div>
             <div class="card" hx-get="/mls7/biergarten" hx-trigger="load">
+            </div>
+            <div class="card" hx-get="/mls7/swimming-pool" hx-trigger="load every 900s">
             </div>
         </div>
     </body>
